@@ -243,6 +243,8 @@ class LearningWithNoisyLabels(BaseEstimator):  # Inherits sklearn classifier
             thresholds=None,
             noise_matrix=None,
             inverse_noise_matrix=None,
+            cleanlab_epochs=None,
+            classifier_epochs=None
     ):
         """This method implements the confident learning. It counts examples
         that are likely labeled correctly and incorrectly and uses their ratio
@@ -343,6 +345,8 @@ class LearningWithNoisyLabels(BaseEstimator):  # Inherits sklearn classifier
                         converge_latent_estimates=(
                             self.converge_latent_estimates),
                         seed=self.seed,
+                        cleanlab_epochs=cleanlab_epochs,
+                        classifier_epochs=classifier_epochs
                     )
             else:  # psx is provided by user (assumed holdout probabilities)
                 self.py, self.noise_matrix, self.inverse_noise_matrix, \
@@ -362,6 +366,8 @@ class LearningWithNoisyLabels(BaseEstimator):  # Inherits sklearn classifier
                 clf=self.clf,
                 cv_n_folds=self.cv_n_folds,
                 seed=self.seed,
+                cleanlab_epochs=cleanlab_epochs,
+                classifier_epochs=classifier_epochs
             )
 
         # if pulearning == the integer specifying the class without noise.
