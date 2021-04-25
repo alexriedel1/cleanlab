@@ -541,6 +541,7 @@ def estimate_confident_joint_and_cv_pred_proba(
         thresholds=None,
         seed=None,
         calibrate=True,
+        **kwargs
 ):
     """Estimates P(s,y), the confident counts of the latent
     joint distribution of true and noisy labels
@@ -612,7 +613,10 @@ def estimate_confident_joint_and_cv_pred_proba(
 
     # Intialize psx array
     psx = np.zeros((len(s), K))
-
+    
+    cleanlab_epochs = kwargs.get('cleanlab_epochs', None)
+    classifier_epochs = kwargs.get('classifier_epochs', None)
+    
     # Split X and s into "cv_n_folds" stratified folds.
     for k, (cv_train_idx, cv_holdout_idx) in enumerate(kf.split(X, s)):
         clf_copy = copy.deepcopy(clf)
@@ -623,7 +627,7 @@ def estimate_confident_joint_and_cv_pred_proba(
 
         # Fit the clf classifier to the training set and
         # predict on the holdout set and update psx.
-        clf_copy.fit(X_train_cv, s_train_cv)
+        clf_copy.fit(X_train_cv, s_train_cv, cleanlab_epochs=cleanlab_epochs)
         psx_cv = clf_copy.predict_proba(X_holdout_cv)  # P(s = k|x) # [:,1]
         psx[cv_holdout_idx] = psx_cv
 
@@ -647,6 +651,7 @@ def estimate_py_noise_matrices_and_cv_pred_proba(
         converge_latent_estimates=False,
         py_method='cnt',
         seed=None,
+        **kwargs
 ):
     """This function computes the out-of-sample predicted
     probability P(s=k|x) for every example x in X using cross
@@ -711,6 +716,7 @@ def estimate_py_noise_matrices_and_cv_pred_proba(
         cv_n_folds=cv_n_folds,
         thresholds=thresholds,
         seed=seed,
+        **kwargs
     )
 
     py, noise_matrix, inv_noise_matrix = estimate_latent(
@@ -729,6 +735,7 @@ def estimate_cv_predicted_probabilities(
         clf=LogReg(multi_class='auto', solver='lbfgs'),
         cv_n_folds=5,
         seed=None,
+        **kwargs
 ):
     """This function computes the out-of-sample predicted
     probability [P(s=k|x)] for every example in X using cross
@@ -770,6 +777,7 @@ def estimate_cv_predicted_probabilities(
         clf=clf,
         cv_n_folds=cv_n_folds,
         seed=seed,
+        **kwargs
     )[-1]
 
 
@@ -833,6 +841,7 @@ def estimate_noise_matrices(
         thresholds=thresholds,
         converge_latent_estimates=converge_latent_estimates,
         seed=seed,
+        **kwargs
     )[1:-2]
 
 
